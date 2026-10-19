@@ -3,11 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkyBook</title>
+    <title>✈ SkyBook</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Hello</h1>
+    <header class="topbar no-print">
+        <h1>✈ SkyBook</h1>
+        <nav id="user-nav" hidden>
+            <span id="user-name"></span>
+            <button id="btn-flights" class="link" type="button">Flights</button>
+            <button id="btn-mytickets" class="link" type="button">My tickets</button>
+            <button id="btn-logout" class="link" type="button">Log Out</button>
+        </nav>
+    </header>
+    
+    <ol id="stepper" class="stepper no-print" hidden>
+        <li data-step="1">Flight</li>
+        <li data-step="2">Passenger</li>
+        <li data-step="3">Seat</li>
+        <li data-step="4">Baggage</li>
+        <li data-step="5">Ticket</li>
+    </ol>
+
+    <main>
+        <section id="login-view" class="view card narrow">
+            <h2>Log in</h2>
+            <form id="login-form" novalidate>
+                <label>Username
+                    <input id="login-username" type="text" autocomplete="username" required>
+                </label>
+                <label>Password
+                    <input id="login-password" type="password" autocomplete="current-password" required>
+                </label>
+                <p id="login-error" class="error" role="alert"></p>
+                <button class="btn primary" type="submit">Log in</button>
+            </form>
+            <p class="hint">Demo account: <code>demo</code> / <code>1234</code></p>
+        </section>
+
+    </main>
+    
     <script src="script.js"></script>
 </body>
 </html>
