@@ -5,6 +5,19 @@ const USERS = [
     { username: "jason", password: "pass", name:"Jason Seb"},
 ];
 
+const FLIGHTS = [
+  { id: "F1", number: "SB101", plane: "9M-SBA", aircraft: "Airbus A320", from: "Kuala Lumpur", to: "Bali",         depart: "2026-10-25T08:30", arrive: "2026-10-25T11:45", price: 120 },
+  { id: "F2", number: "SB202", plane: "9M-SBB", aircraft: "Boeing 737",  from: "Kuala Lumpur", to: "Tokyo",        depart: "2026-10-26T23:10", arrive: "2026-10-27T07:00", price: 340 },
+  { id: "F3", number: "SB303", plane: "9M-SBC", aircraft: "Airbus A320", from: "Bali",         to: "Singapore",    depart: "2026-10-27T14:00", arrive: "2026-10-27T16:40", price: 95  },
+  { id: "F4", number: "SB404", plane: "9M-SBD", aircraft: "Boeing 737",  from: "Singapore",    to: "Kuala Lumpur", depart: "2026-10-28T06:15", arrive: "2026-10-28T07:20", price: 60  },
+  { id: "F5", number: "SB505", plane: "9M-SBE", aircraft: "Airbus A321", from: "Tokyo",        to: "Kuala Lumpur", depart: "2026-10-30T10:00", arrive: "2026-10-30T16:30", price: 360 },
+  { id: "F6", number: "SB606", plane: "9M-SBF", aircraft: "Airbus A321", from: "Kuala Lumpur", to: "Singapore",    depart: "2026-11-01T18:45", arrive: "2026-11-01T19:50", price: 70  },
+];
+
+const ROWS = 10;                          // seat rows on every plane
+const COLS = ["A", "B", "C", "D", "E", "F"];
+const STORAGE_BOOKINGS = "jaspair_bookings";
+
 const STORAGE_SESSION = "jaspair_session";
 
 const state = {
