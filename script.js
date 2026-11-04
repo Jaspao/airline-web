@@ -30,6 +30,32 @@ const state = {
 
 const $ = (sel) => document.querySelector(sel);
 
+function esc(text){
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+
+}
+
+function formatDate(iso){
+    return new Date(iso).toLocaleString([], { dateStyle: "medium", timeStyle: "short"})
+}
+
+function money(n){
+    return "$" + n.toFixed(2);
+}
+
+function getBookings(){
+    try{
+        return JSON.parse(localStorage.getItem(STORAGE_BOOKINGS)) || [];
+    } catch {
+        return [];
+    }
+}
+
+// Small seeded random generator: same seed text → same sequence every time.
+// Treat it as a black box: it lets each flight have the same pre-taken seats on every refresh.
+
 
 /* navigation stuffs */
 const STEP_OF_VIEW = {flights:1, booking:2, seats:3, baggage:4, ticket:5};
