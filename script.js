@@ -55,7 +55,35 @@ function getBookings(){
 
 // Small seeded random generator: same seed text → same sequence every time.
 // Treat it as a black box: it lets each flight have the same pre-taken seats on every refresh.
+function seededRandom(seedStr) {
+  let h = 1779033703 ^ seedStr.length;
+  for (let i = 0; i < seedStr.length; i++) {
+    h = Math.imul(h ^ seedStr.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  let a = h >>> 0;
+  return function () {
+    a |= 0; a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
 
+// The set of seat IDs that are unavailable, like "3B"
+function takenSeats(flight) {
+  const taken = new Set();
+  const rand = seededRandom(flight.id);
+  for (let r = 1; r <= ROWS; r++) {
+    for (const c of COLS) {
+      if (rand() < 0.35) taken.add(r + c);   // about 35% pre-booked
+    }
+  }
+  getBookings()
+    .filter((b) => b.flightId === flight.id)
+    .forEach((b) => taken.add(b.seat));       // plus seats this browser has booked
+  return taken;
+}
 
 /* navigation stuffs */
 const STEP_OF_VIEW = {flights:1, booking:2, seats:3, baggage:4, ticket:5};
@@ -108,6 +136,7 @@ function startSession(user){
     state.user = user;
     sessionStorage.setItem(STORAGE_SESSION, user.username);
     updateNav();
+    renderFlights();            // ← new
     showView("flights");
 }
 
@@ -120,11 +149,58 @@ function logout(){
     showView("login");
 }
 
+/* ===== FLIGHTS ===== */
+
+function setupFilters() {
+  const places = [...new Set(FLIGHTS.flatMap((f) => [f.from, f.to]))].sort();
+  const options = '<option value="">Any</option>' +
+    places.map((p) => `<option value="${esc(p)}">${esc(p)}</option>`).join("");
+  $("#filter-from").innerHTML = options;
+  $("#filter-to").innerHTML = options;
+}
+
+function renderFlights() {
+  const from = $("#filter-from").value;
+  const to = $("#filter-to").value;
+  const list = $("#flight-list");
+
+  const matches = FLIGHTS.filter(
+    (f) => (!from || f.from === from) && (!to || f.to === to)
+  );
+
+  if (matches.length === 0) {
+    list.innerHTML = '<p class="empty">No flights match that search.</p>';
+    return;
+  }
+
+  list.innerHTML = matches.map((f) => {
+    const left = ROWS * COLS.length - takenSeats(f).size;
+    const soldOut = left === 0;
+    return `
+      <article class="flight">
+        <div>
+          <div class="route">${esc(f.from)} → ${esc(f.to)}</div>
+          <div class="meta">${esc(f.number)} · ${esc(f.aircraft)}</div>
+          <div class="meta">${formatDate(f.depart)} – ${formatDate(f.arrive)}</div>
+        </div>
+        <div>
+          <div class="price">${money(f.price)}</div>
+          <div class="left">${soldOut ? "Sold out" : left + " seats left"}</div>
+          <button class="btn primary" data-flight="${f.id}" ${soldOut ? "disabled" : ""}>Select</button>
+        </div>
+      </article>`;
+  }).join("");
+}
+
 /*start it up*/
 
 function init(){
     $("#login-form").addEventListener("submit",login);
     $("#btn-logout").addEventListener("click",logout);
+
+    $("#btn-flights").addEventListener("click", () => { renderFlights(); showView("flights"); });
+    $("#filter-from").addEventListener("change", renderFlights);
+    $("#filter-to").addEventListener("change", renderFlights);
 
     const saved = sessionStorage.getItem(STORAGE_SESSION);
     const user = USERS.find((u)=> u.username === saved) ;
