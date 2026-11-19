@@ -192,9 +192,38 @@ function renderFlights() {
   }).join("");
 }
 
+/* ===== BOOKING: SELECT FLIGHT + PASSENGER ===== */
+
+function flightSummary(f) {
+  return `<strong>${esc(f.from)} → ${esc(f.to)}</strong><br>
+    ${esc(f.number)} · ${formatDate(f.depart)} · from ${money(f.price)}`;
+}
+
+function selectFlight(id) {
+  state.flight = FLIGHTS.find((f) => f.id === id);
+  state.seat = null;                       // new flight → forget old choices
+  state.bag = null;
+  $("#passenger-name").value = state.user.name;   // pre-fill
+  $("#passenger-error").textContent = "";
+  $("#booking-flight").innerHTML = flightSummary(state.flight);
+  showView("booking");
+}
+
+function submitPassenger(event) {
+  event.preventDefault();
+  const name = $("#passenger-name").value.trim();
+  if (name.length < 2) {
+    $("#passenger-error").textContent = "Please enter the passenger's full name.";
+    return;
+  }
+  state.passenger = name;
+  console.log("State so far:", state);   // temporary: replaced in Part 6
+}
+
 /*start it up*/
 
 function init(){
+    setupFilters();
     $("#login-form").addEventListener("submit",login);
     $("#btn-logout").addEventListener("click",logout);
 
@@ -206,6 +235,19 @@ function init(){
     const user = USERS.find((u)=> u.username === saved) ;
     if (user) startSession(user);
     else showView("login");
+
+    // One listener handles every "Select" button (event delegation)
+  $("#flight-list").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-flight]");
+    if (btn) selectFlight(btn.dataset.flight);
+  });
+
+  $("#passenger-form").addEventListener("submit", submitPassenger);
+
+  // Every button with data-back="viewName" goes back to that view
+  document.querySelectorAll("[data-back]").forEach((btn) => {
+    btn.addEventListener("click", () => showView(btn.dataset.back));
+  });
 }
 
 init();

@@ -53,6 +53,22 @@
             </div>
             <div id="flight-list" class="flight-list"></div>
         </section>
+
+            <!-- PASSENGER -->
+        <section id="booking-view" class="view card narrow" hidden>
+            <h2>Passenger details</h2>
+            <div id="booking-flight" class="summary"></div>
+            <form id="passenger-form" novalidate>
+                <label>Full name (as on passport)
+                    <input id="passenger-name" type="text" required>
+                </label>
+                <p id="passenger-error" class="error" role="alert"></p>
+                <div class="actions">
+                    <button class="btn" type="button" data-back="flights">Back</button>
+                    <button class="btn primary" type="submit">Choose seat</button>
+                </div>
+            </form>
+        </section>
     </main>
     
     <script src="script.js"></script>
