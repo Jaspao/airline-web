@@ -143,3 +143,41 @@ code { background: var(--bg); padding: 2px 6px; border-radius: 4px; }
   font-size: 0.9rem;
 }
 
+/* seats */
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.85rem; margin-bottom: 12px; }
+.swatch {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border-radius: 3px;
+  border: 1px solid #94a3b8;
+  vertical-align: middle;
+}
+.swatch.free     { background: #fff; }
+.swatch.legroom  { background: var(--gold); }
+.swatch.taken    { background: #cbd5e1; }
+.swatch.selected { background: var(--blue); }
+
+.seat-map {
+  width: fit-content;
+  margin: 0 auto;
+  padding: 16px 24px;
+  border: 2px solid var(--border);
+  border-radius: 60px 60px 12px 12px;   /* rounded "nose" of the plane */
+  background: #f8fafc;
+}
+.seat-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.row-label { width: 22px; text-align: center; font-size: 0.75rem; color: var(--muted); }
+.aisle { width: 18px; }
+.seat {
+  width: 36px; height: 36px;
+  border: 1px solid #94a3b8;
+  border-radius: 6px 6px 3px 3px;
+  background: #fff;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+.seat.legroom  { background: var(--gold); }
+.seat.taken    { background: #cbd5e1; cursor: not-allowed; color: #94a3b8; }
+.seat.selected { background: var(--blue); color: #fff; border-color: var(--blue-dark); }
+.seat:not(:disabled):hover { transform: translateY(-1px); border-color: var(--blue); }
+.selected-text { text-align: center; font-weight: 600; margin-top: 16px; }

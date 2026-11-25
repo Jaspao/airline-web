@@ -27,6 +27,8 @@ const state = {
     seat: null,
     bag: null,
 };
+const LEGROOM_ROWS = 3;      // rows 1-3 cost extra
+const LEGROOM_FEE = 15;
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -83,6 +85,11 @@ function takenSeats(flight) {
     .filter((b) => b.flightId === flight.id)
     .forEach((b) => taken.add(b.seat));       // plus seats this browser has booked
   return taken;
+}
+
+function seatFee(seat) {
+  const row = parseInt(seat, 10);        // "2B" → 2
+  return row <= LEGROOM_ROWS ? LEGROOM_FEE : 0;
 }
 
 /* navigation stuffs */
@@ -217,7 +224,49 @@ function submitPassenger(event) {
     return;
   }
   state.passenger = name;
-  console.log("State so far:", state);   // temporary: replaced in Part 6
+  renderSeats();          
+  showView("seats");
+}
+
+/* ===== SEATS ===== */
+
+function renderSeats() {
+  const taken = takenSeats(state.flight);
+  $("#seats-flight").innerHTML = flightSummary(state.flight);
+
+  let html = "";
+  for (let r = 1; r <= ROWS; r++) {
+    html += `<div class="seat-row"><span class="row-label">${r}</span>`;
+    COLS.forEach((c, i) => {
+      const id = r + c;                       // e.g. "4C"
+      const classes = ["seat"];
+      if (r <= LEGROOM_ROWS) classes.push("legroom");
+      if (taken.has(id)) classes.push("taken");
+      if (state.seat === id) classes.push("selected");
+      html += `<button type="button" class="${classes.join(" ")}" data-seat="${id}"
+                 ${taken.has(id) ? "disabled" : ""} aria-label="Seat ${id}">${id}</button>`;
+      if (i === 2) html += '<span class="aisle"></span>';   // aisle between C and D
+    });
+    html += "</div>";
+  }
+  $("#seat-map").innerHTML = html;
+  updateSeatText();
+}
+
+function updateSeatText() {
+  const text = $("#seat-selected");
+  if (state.seat) {
+    const fee = seatFee(state.seat);
+    text.textContent = `Seat ${state.seat}` + (fee ? ` (extra legroom +${money(fee)})` : "");
+  } else {
+    text.textContent = "No seat selected";
+  }
+  $("#seats-next").disabled = !state.seat;    // can't continue without a seat
+}
+
+function pickSeat(seat) {
+  state.seat = seat;
+  renderSeats();          // redraw so the old seat un-highlights and the new one highlights
 }
 
 /*start it up*/
@@ -243,7 +292,10 @@ function init(){
   });
 
   $("#passenger-form").addEventListener("submit", submitPassenger);
-
+  $("#seat-map").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-seat]");
+    if (btn && !btn.disabled) pickSeat(btn.dataset.seat);
+  });
   // Every button with data-back="viewName" goes back to that view
   document.querySelectorAll("[data-back]").forEach((btn) => {
     btn.addEventListener("click", () => showView(btn.dataset.back));

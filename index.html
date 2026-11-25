@@ -69,6 +69,24 @@
                 </div>
             </form>
         </section>
+
+    <!-- SEATS -->
+        <section id="seats-view" class="view card" hidden>
+            <h2>Choose your seat</h2>
+            <div id="seats-flight" class="summary"></div>
+            <div class="legend">
+                <span><i class="swatch free"></i> Available</span>
+                <span><i class="swatch legroom"></i> Extra legroom (+$15)</span>
+                <span><i class="swatch taken"></i> Taken</span>
+                <span><i class="swatch selected"></i> Your seat</span>
+            </div>
+            <div id="seat-map" class="seat-map" aria-label="Seat map"></div>
+            <p id="seat-selected" class="selected-text">No seat selected</p>
+            <div class="actions">
+                <button class="btn" type="button" data-back="booking">Back</button>
+                <button id="seats-next" class="btn primary" type="button" disabled>Choose baggage</button>
+            </div>
+        </section>
     </main>
     
     <script src="script.js"></script>
